@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System;
 
 
 namespace Professor
@@ -17,6 +19,11 @@ namespace Professor
 
             builder.Services.AddControllers();
 
+
+            // Register DbContext
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DockerConnection")));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -32,8 +39,6 @@ namespace Professor
             //        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
             //    });
             //}
-
-
 
             app.UseSwagger();
             app.UseSwaggerUI();

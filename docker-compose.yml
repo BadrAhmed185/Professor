@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: professor-sql-local
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Badr1852003   # keep it the same everywhere
+    ports:
+      - "1433:1433"   # expose SQL locally
+    volumes:
+      - mssql_data:/var/opt/mssql
+      - ./backup:/var/opt/mssql/backup   # put professor.bak in ./backup folder
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=professor;User Id=sa;Password=Badr1852003;TrustServerCertificate=True;
+    ports:
+      - "5000:80"
+    restart: unless-stopped
+
+volumes:
+  mssql_data:
